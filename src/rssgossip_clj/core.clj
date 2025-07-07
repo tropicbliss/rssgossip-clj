@@ -57,9 +57,13 @@
 
 (defn get-node-content [node] (first (:content node)))
 
+(defmacro when-else
+  [test if-body & else-body]
+  `(if ~test ~if-body (do ~@else-body)))
+
 (defn -main [& args]
   (let [{:keys [search-regexp include-urls exit-message ok?]} (validate-args args) pattern (re-ignorecase search-regexp)]
-    (if exit-message
+    (when-else exit-message
       (exit (if ok? 0 2) exit-message)
       (do
         (let [rss-feed (System/getenv "RSS_FEED") urls (split rss-feed)]
