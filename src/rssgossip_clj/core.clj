@@ -73,4 +73,4 @@
                              (println txt)
                              (if include-urls
                                (println (str "\t" (get-node-content link-node)))))))))
-                   (catch Exception e (exit 1 e))))))))))
+                   (catch Exception _ (System/exit 1))))))))))
