@@ -46,7 +46,7 @@
 (defn split [text] (string/split text #"\s+"))
 
 (defn remove-accents [text]
-  (->> (Normalizer/normalize text Normalizer$Form/NFKD)  ; txt first, form second
+  (->> (Normalizer/normalize text Normalizer$Form/NFKD)
        (filter #(<= (int %) 127))
        (apply str)))
 
