@@ -1,44 +1,54 @@
-# rssgossip-clj
+RSS GOSSIP
+==========
 
-FIXME: description
+This is a very, very simple Clojure application to read the contents of an RSS feed and look for a key phrase.
 
-## Installation
-
-Download from http://example.com/FIXME.
+This project is based on [rssgossip](https://github.com/dogriffiths/rssgossip) written in Python and has been adapted to Clojure as a learning project.
 
 ## Usage
 
-FIXME: explanation
+For example, to look for stories about 'NASA' in the RSS 2.0 sample feed, you can do this:
 
-    $ java -jar rssgossip-clj-0.1.0-standalone.jar [args]
+```bash
+export RSS_FEED=https://www.rssboard.org/files/sample-rss-2.xml
+lein run 'nasa'
+```
 
-## Options
+Why does the script configure the feed using an environment variable? Because the original Python module was written as
+an example program for the book [Head First C](http://shop.oreilly.com/product/0636920015482.do) (great book for learning C btw). The book
+needed an example external program that required command line arguments as well as environment variables.
 
-FIXME: listing of options this app accepts.
+If you want the script to search more than one feed, set `RSS_FEED` to a list of space-separated URLs.
 
-## Examples
+The search string can be a regular expression. So:
 
-...
+```bash
+lein run 'mars|jupiter|saturn'
+```
 
-### Bugs
+will find stories containing any of the three planet names.
 
-...
+## Building
 
-### Any Other Sections
-### That You Think
-### Might be Useful
+This project uses [Leiningen](https://leiningen.org/) for dependency management and building.
 
-## License
+To build the project:
 
-Copyright © 2025 FIXME
+```bash
+lein compile
+```
 
-This program and the accompanying materials are made available under the
-terms of the Eclipse Public License 2.0 which is available at
-http://www.eclipse.org/legal/epl-2.0.
+To run the application:
 
-This Source Code may also be made available under the following Secondary
-Licenses when the conditions for such availability set forth in the Eclipse
-Public License, v. 2.0 are satisfied: GNU General Public License as published by
-the Free Software Foundation, either version 2 of the License, or (at your
-option) any later version, with the GNU Classpath Exception which is available
-at https://www.gnu.org/software/classpath/license.html.
+```bash
+lein run <search-term>
+```
+
+## Example
+
+Using the RSS 2.0 sample feed to search for any space-related content:
+
+```bash
+export RSS_FEED=https://www.rssboard.org/files/sample-rss-2.xml
+lein run 'space|satellite|orbit'
+```
