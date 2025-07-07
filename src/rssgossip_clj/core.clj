@@ -57,24 +57,19 @@
 
 (defn get-node-content [node] (first (:content node)))
 
-(defmacro when-else
-  [test if-body & else-body]
-  `(if ~test ~if-body (do ~@else-body)))
-
 (defn -main [& args]
   (let [{:keys [search-regexp include-urls exit-message ok?]} (validate-args args) pattern (re-ignorecase search-regexp)]
-    (when-else exit-message
+    (if exit-message
       (exit (if ok? 0 2) exit-message)
-      (do
-        (let [rss-feed (System/getenv "RSS_FEED") urls (split rss-feed)]
-          (doseq [url urls]
-            (let [response (http/get url)]
-              (try (let [dom (xml/parse-str (:body response))]
-                     (doseq [node (xml-seq dom)]
-                       (if (= :item (:tag node))
-                         (let [title-node (first-child-by-name node :title) link-node (first-child-by-name node :link) txt (remove-accents (get-node-content title-node))]
-                           (when (re-find pattern txt)
-                             (println txt)
-                             (if include-urls
-                               (println (str "\t" (get-node-content link-node)))))))))
-                   (catch Exception _ (System/exit 1))))))))))
+      (let [rss-feed (System/getenv "RSS_FEED") urls (split rss-feed)]
+        (doseq [url urls]
+          (let [response (http/get url)]
+            (try (let [dom (xml/parse-str (:body response))]
+                   (doseq [node (xml-seq dom)]
+                     (if (= :item (:tag node))
+                       (let [title-node (first-child-by-name node :title) link-node (first-child-by-name node :link) txt (remove-accents (get-node-content title-node))]
+                         (when (re-find pattern txt)
+                           (println txt)
+                           (if include-urls
+                             (println (str "\t" (get-node-content link-node)))))))))
+                 (catch Exception _ (System/exit 1)))))))))
