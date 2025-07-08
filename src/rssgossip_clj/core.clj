@@ -61,13 +61,13 @@
   (let [{:keys [search-regexp include-urls exit-message ok?]} (validate-args args) pattern (re-ignorecase search-regexp)]
     (if exit-message
       (exit (if ok? 0 2) exit-message)
-      (let [rss-feed (System/getenv "RSS_FEED") urls (split rss-feed)]
+      (let [urls (split (System/getenv "RSS_FEED"))]
         (doseq [url urls]
           (let [response (http/get url)]
             (try
-              (let [dom (xml/parse-str (:body response)) nodes (filter #(= :item (:tag %)) (xml-seq dom))]
+              (let [nodes (filter #(= :item (:tag %)) (xml-seq (xml/parse-str (:body response))))]
                 (doseq [node nodes]
-                  (let [title-node (first-child-by-name node :title) link-node (first-child-by-name node :link) txt (remove-accents (get-node-content title-node))]
+                  (let [link-node (first-child-by-name node :link) txt (remove-accents (get-node-content (first-child-by-name node :title)))]
                     (when (re-find pattern txt)
                       (println txt)
                       (if include-urls
