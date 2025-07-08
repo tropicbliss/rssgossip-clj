@@ -65,12 +65,11 @@
         (doseq [url urls]
           (let [response (http/get url)]
             (try
-              (let [dom (xml/parse-str (:body response))]
-                (doseq [node (xml-seq dom)]
-                  (if (= :item (:tag node))
-                    (let [title-node (first-child-by-name node :title) link-node (first-child-by-name node :link) txt (remove-accents (get-node-content title-node))]
-                      (when (re-find pattern txt)
-                        (println txt)
-                        (if include-urls
-                          (println (str "\t" (get-node-content link-node)))))))))
+              (let [dom (xml/parse-str (:body response)) nodes (filter #(= :item (:tag %)) (xml-seq dom))]
+                (doseq [node nodes]
+                  (let [title-node (first-child-by-name node :title) link-node (first-child-by-name node :link) txt (remove-accents (get-node-content title-node))]
+                    (when (re-find pattern txt)
+                      (println txt)
+                      (if include-urls
+                        (println (str "\t" (get-node-content link-node))))))))
               (catch Exception _ (System/exit 1)))))))))
